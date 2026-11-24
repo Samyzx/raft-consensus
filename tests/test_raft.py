@@ -113,10 +113,12 @@ def test_lease_handoff_and_reads_after_quorum_loss(tmp_path):
                                              for node in cluster.nodes.values()))
                 await eventually(lambda: old.lease.valid_until - time.monotonic() > 1.2)
                 old_expiry = old.lease.valid_until
+                successor = next(node for node in cluster.nodes.values() if node is not old)
                 await cluster.stop(old.id)
-                successor = await eventually(lambda: next(
-                    (node for node in cluster.nodes.values() if node.role == "leader"), None
-                ))
+                # Trigger the election during the old lease instead of racing randomized timers.
+                successor.election_deadline = time.monotonic()
+                successor.wake.set()
+                await eventually(lambda: successor.role == "leader")
                 assert time.monotonic() < old_expiry
                 assert not successor._can_serve(successor.term)
                 async with grpc.aio.insecure_channel(cluster.addresses[successor.id]) as channel:
