@@ -9,6 +9,20 @@ Five independent Python processes replicate a string-to-string key-value store o
 
 Both modes wait for the leader’s current-term `NO-OP` to be committed and applied before serving client operations. A successful `SET` means the log entry was stored by a majority and applied by the leader. A missing key returns an empty string. The client reuses a request ID across retries of each `SET`, so replaying the same operation cannot overwrite a later value.
 
+## Visual lab
+
+Start the lab after installing the dependencies. It launches two independent five-node clusters and serves the dashboard on loopback. Choose 3, 5, 7, or 9 nodes per cluster in the browser. Each node is a real Python process communicating over gRPC.
+
+```powershell
+.\.venv\Scripts\python.exe -m raftkv.lab
+```
+
+Open [Raft Lab](http://127.0.0.1:8000). Try a `SET` and `GET` in both clusters, stop a leader to see the election and handoff, and restart it to watch the commit and log positions catch up. **Run experiment** commits the same value to both clusters, removes their quorums by stopping followers, and records actual reads before and after lease expiry. **Restore nodes** restarts stopped processes with their existing logs. Recreating clusters starts a fresh lab run. The lab’s temporary data is cleared when it shuts down normally.
+
+![Raft Lab showing two five-node clusters after a successful write and read](docs/raft-lab.png)
+
+The lab uses a **6-second lease** to make the handoff and quorum-loss window visible. The normal CLI retains the documented 2-second default. The dashboard’s request times include local client routing and retry deadlines. Use the regression tests for a controlled comparison of which operations require peer acknowledgments.
+
 ## Prerequisites
 
 - Python 3.11 or newer with `venv` and `pip`. Verified with Python 3.14 on Windows.
@@ -51,6 +65,7 @@ For standard Raft, stop the first cluster and launch all five nodes with `--mode
 | --- | --- | --- | --- |
 | `default` | 500 ms | Randomized from 3 to 5 s | 2 s |
 | `assignment` | 1 s | Randomized from 5 to 10 s | 4 s |
+| `lab` | 500 ms | Randomized from 3 to 5 s | 6 s |
 
 The default uses YugabyteDB’s documented heartbeat and lease defaults. The lower end of our election window comes from six missed 500 ms heartbeats, and we randomize over a wider window for this project. Use `--profile assignment` on all nodes for the slower classroom demo. [YugabyteDB tablet-server flags](https://docs.yugabyte.com/stable/reference/configuration/all-flags-yb-tserver/)
 
@@ -62,7 +77,18 @@ Look for `became the leader` in each node’s `dump.txt`. The authoritative stat
 2. Stop the leader, then issue a `GET` and a `SET`. The client should discover the successor. Restart the former leader and check that it catches up as a follower.
 3. In lease mode, stop three followers together. A prompt `GET` can succeed until the last lease expires. Watch for `lease renewal failed` in the leader’s dump. A `GET` or `SET` with `--timeout 2` then exits with an error. In standard mode the same `GET` requires a quorum immediately.
 
-The automated tests exercise these behaviors with shorter timings. They also verify conflict repair, vote persistence across restart, and the lease handoff using actual loopback gRPC calls.
+## Regression tests and tradeoffs
+
+Run `python -m pytest -q` from the activated virtual environment. GitHub Actions runs the same suite on Windows and Linux.
+
+| Scenario | Standard Raft | Lease-based Raft |
+| --- | --- | --- |
+| Peer acknowledgments withheld after a healthy write | `GET` stays pending even after one follower acknowledges. The test releases enough peers to finish the read. | `GET` returns the committed value while the peers are still blocked. |
+| Healthy leader loses its quorum | `GET` requires a fresh quorum. A new `SET` cannot commit. | `GET` can return the committed value until expiry. A new `SET` still cannot commit. |
+| A successor wins an election | It can serve after committing a current-term `NO-OP`. Its reads still require quorum confirmation. | The successor refuses both reads and writes while an old lease may still be valid, then needs its own quorum-backed lease. |
+| Clock assumptions | Read safety comes from exchanging messages with a quorum. | Local reads depend on bounded monotonic clock drift and an advancing clock. |
+
+The peer-gating regression exercises five- and seven-node clusters over loopback gRPC. Other tests cover conflicting uncommitted entries, vote persistence, follower restart, missing keys, write retries, and log catch-up. The lab regression drives both modes through quorum loss using independent operating-system processes.
 
 ## How the lease works
 

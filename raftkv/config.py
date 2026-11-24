@@ -26,6 +26,7 @@ class Timing:
 PROFILES = {
     "default": Timing(),
     "assignment": Timing(heartbeat=1.0, election_min=5.0, election_max=10.0, lease_ms=4000),
+    "lab": Timing(lease_ms=6000),
 }
 
 

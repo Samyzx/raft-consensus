@@ -49,6 +49,11 @@ class RaftStub:
                 request_serializer=raftkv_dot_raft__pb2.ServeClientArgs.SerializeToString,
                 response_deserializer=raftkv_dot_raft__pb2.ServeClientReply.FromString,
                 _registered_method=True)
+        self.Inspect = channel.unary_unary(
+                '/raftkv.Raft/Inspect',
+                request_serializer=raftkv_dot_raft__pb2.InspectRequest.SerializeToString,
+                response_deserializer=raftkv_dot_raft__pb2.NodeStatus.FromString,
+                _registered_method=True)
 
 
 class RaftServicer:
@@ -72,6 +77,12 @@ class RaftServicer:
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def Inspect(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_RaftServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -89,6 +100,11 @@ def add_RaftServicer_to_server(servicer, server):
                     servicer.ServeClient,
                     request_deserializer=raftkv_dot_raft__pb2.ServeClientArgs.FromString,
                     response_serializer=raftkv_dot_raft__pb2.ServeClientReply.SerializeToString,
+            ),
+            'Inspect': grpc.unary_unary_rpc_method_handler(
+                    servicer.Inspect,
+                    request_deserializer=raftkv_dot_raft__pb2.InspectRequest.FromString,
+                    response_serializer=raftkv_dot_raft__pb2.NodeStatus.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -172,6 +188,33 @@ class Raft:
             '/raftkv.Raft/ServeClient',
             raftkv_dot_raft__pb2.ServeClientArgs.SerializeToString,
             raftkv_dot_raft__pb2.ServeClientReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Inspect(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/raftkv.Raft/Inspect',
+            raftkv_dot_raft__pb2.InspectRequest.SerializeToString,
+            raftkv_dot_raft__pb2.NodeStatus.FromString,
             options,
             channel_credentials,
             insecure,

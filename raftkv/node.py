@@ -59,6 +59,7 @@ class Node(service.RaftServicer):
         self.changed = asyncio.Event()
         self.reads: list[asyncio.Future] = []
         self.replicate_soon = False
+        self.replication_rounds = 0
         self.fatal_error: sqlite3.Error | None = None
         self.server = None
         self.task = None
@@ -303,6 +304,7 @@ class Node(service.RaftServicer):
 
     async def _replicate(self) -> None:
         self.replicate_soon = False
+        self.replication_rounds += 1
         now = time.monotonic()
         term = self.term
         lease = self.lease
@@ -378,10 +380,24 @@ class Node(service.RaftServicer):
 
     def _can_serve(self, term: int) -> bool:
         self._expire_lease()
+        return self._ready(term, time.monotonic())
+
+    def _ready(self, term: int, now: float) -> bool:
         return (
             self.fatal_error is None and self.role == "leader" and self.term == term
             and 0 < self.noop_index <= self.applied
-            and (self.lease is None or time.monotonic() < self.lease.valid_until)
+            and (self.lease is None or now < self.lease.valid_until)
+        )
+
+    async def Inspect(self, request, context):
+        now = time.monotonic()
+        lease = self.lease if self.role == "leader" else None
+        return rpc.NodeStatus(
+            role=self.role, term=self.term, log_index=len(self.log) - 1,
+            commit_index=self.commit_index, leader_id=self.leader_id, ready=self._ready(self.term, now),
+            lease_remaining_ms=max(0, int((lease.valid_until - now) * 1000)) if lease else 0,
+            handoff_remaining_ms=max(0, int((lease.wait_until - now) * 1000)) if lease else 0,
+            replication_rounds=self.replication_rounds,
         )
 
     def _client_reply(self, success: bool = False, data: str = ""):

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Raft Lab</title>
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-icon" aria-hidden="true"><i></i><i></i><i></i></span> Raft Lab</div>
+    <p class="connection" id="connection">Connecting to local processes</p>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="title">
+      <div>
+        <h1 id="title">Raft consensus, side by side</h1>
+        <p>Send the same requests to two live clusters. Stop nodes to observe what each leader can still serve.</p>
+      </div>
+      <form class="cluster-settings" id="cluster-settings">
+        <label for="count">Nodes per cluster</label>
+        <div class="settings-row">
+          <span class="select-wrap"><select id="count"><option>3</option><option selected>5</option><option>7</option><option>9</option></select></span>
+          <button type="submit" class="secondary" title="Start fresh clusters and clear the current demo data">Recreate clusters</button>
+        </div>
+      </form>
+    </section>
+    <div class="workbench">
+      <section class="cluster-stack" id="clusters" aria-label="Live clusters">
+        <p class="loading">Starting the local Raft clusters…</p>
+      </section>
+      <aside class="console" aria-label="Controls and activity">
+        <section class="panel request-panel">
+          <h2>Client console</h2>
+          <form id="request-form">
+            <label for="target">Send to</label>
+            <span class="select-wrap"><select id="target"><option value="both">Both clusters</option><option value="standard">Standard Raft</option><option value="lease">Lease-based Raft</option></select></span>
+            <label for="key">Key</label>
+            <input id="key" value="demo" required maxlength="1000" autocomplete="off">
+            <label for="value">Value for SET</label>
+            <input id="value" value="hello raft" maxlength="2000" autocomplete="off">
+            <div class="button-row">
+              <button type="submit" class="primary" name="verb" value="SET">SET</button>
+              <button type="submit" class="secondary" name="verb" value="GET">GET</button>
+            </div>
+          </form>
+          <div id="client-results" class="client-results" aria-live="polite" hidden></div>
+        </section>
+        <section class="panel activity-panel">
+          <h2>Activity</h2>
+          <ol id="activity" class="activity">
+            <li class="empty-activity">Elections and client actions will appear here.</li>
+          </ol>
+        </section>
+      </aside>
+    </div>
+    <section class="panel scenario" aria-labelledby="scenario-title">
+      <div class="scenario-head">
+        <div>
+          <h2 id="scenario-title">Quorum-loss experiment</h2>
+          <p>Commit a value in both clusters, stop enough followers to lose a majority, then read before and after lease expiry.</p>
+        </div>
+        <button type="button" id="compare" class="primary">Run experiment</button>
+      </div>
+      <p id="scenario-progress" class="scenario-progress" aria-live="polite" hidden></p>
+      <div id="scenario-results" class="scenario-results" aria-live="polite" hidden></div>
+    </section>
+  </main>
+  <template id="cluster-template">
+    <article class="panel cluster">
+      <div class="cluster-head">
+        <div class="cluster-title">
+          <h2 data-name></h2>
+          <p data-description></p>
+        </div>
+        <button type="button" class="secondary compact" data-action="restore">Restore nodes</button>
+      </div>
+      <div class="cluster-stats">
+        <span><span class="stat-label">Leader</span><strong data-leader>–</strong></span>
+        <span><span class="stat-label">Term</span><strong data-term>–</strong></span>
+        <span><span class="stat-label">Reachable</span><strong data-live>–</strong></span>
+        <span><span class="stat-label">Majority</span><strong data-majority>–</strong></span>
+      </div>
+      <div class="node-grid" data-nodes></div>
+      <div class="cluster-footer">
+        <div class="lease-status">
+          <span data-policy></span>
+          <progress data-progress aria-label="Lease time remaining" hidden></progress>
+        </div>
+        <span class="rounds" data-rounds></span>
+      </div>
+    </article>
+  </template>
+  <template id="node-template">
+    <div class="node">
+      <div class="node-head"><span data-node-name></span><span class="role" data-role></span></div>
+      <div class="node-detail"><span>Commit <b data-commit>–</b></span><span>Log <b data-log>–</b></span></div>
+      <button type="button" class="node-action" data-action="stop" data-node></button>
+    </div>
+  </template>
+</body>
+</html>

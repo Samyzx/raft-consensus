@@ -19,8 +19,8 @@ FAST = Timing(heartbeat=0.12, election_min=0.55, election_max=0.85, peer_timeout
               lease_ms=1450, client_attempt=0.4)
 
 
-def addresses():
-    sockets = [socket.socket() for _ in range(5)]
+def addresses(count):
+    sockets = [socket.socket() for _ in range(count)]
     try:
         for sock in sockets:
             sock.bind(("127.0.0.1", 0))
@@ -38,9 +38,9 @@ async def eventually(check, *, timeout=8):
 
 
 class Cluster:
-    def __init__(self, path, mode, timing):
+    def __init__(self, path, mode, timing, count=5):
         self.path, self.mode, self.timing = path, mode, timing
-        self.addresses = addresses()
+        self.addresses = addresses(count)
         self.nodes = {}
 
     async def start(self, node_id):
@@ -59,8 +59,8 @@ class Cluster:
 
 
 @asynccontextmanager
-async def running_cluster(path, mode, timing=FAST):
-    cluster = Cluster(path, mode, timing)
+async def running_cluster(path, mode, timing=FAST, *, count=5):
+    cluster = Cluster(path, mode, timing, count)
     try:
         for node_id in cluster.addresses:
             await cluster.start(node_id)
@@ -86,6 +86,13 @@ def test_standard_replication_recovery_and_quorum_reads(tmp_path):
                     await cluster.start(node_id)
                 await eventually(lambda: all(node.values.get("team name") == "new value"
                                              for node in cluster.nodes.values()))
+                former_id = leader.id
+                await cluster.stop(former_id)
+                assert await client.request("GET", "team name") == "new value"
+                leader = await cluster.leader()
+                assert leader.id != former_id
+                await cluster.start(former_id)
+                followers = [node_id for node_id in cluster.nodes if node_id != leader.id]
                 await cluster.stop(*followers[:3])
                 with pytest.raises(TimeoutError):
                     await client.request("GET", "team name", timeout=0.6)
@@ -112,6 +119,13 @@ def test_lease_handoff_and_reads_after_quorum_loss(tmp_path):
                 ))
                 assert time.monotonic() < old_expiry
                 assert not successor._can_serve(successor.term)
+                async with grpc.aio.insecure_channel(cluster.addresses[successor.id]) as channel:
+                    stub = service.RaftStub(channel)
+                    attempted = await asyncio.gather(*(
+                        stub.ServeClient(rpc.ServeClientArgs(Request=command), timeout=1)
+                        for command in ("GET x", "SET x unsafe")
+                    ))
+                    assert all(not reply.Success for reply in attempted)
                 assert "waiting for Old Leader Lease" in (tmp_path / f"logs_node_{successor.id}" / "dump.txt").read_text()
                 assert await client.request("GET", "x") == "before crash"
                 assert time.monotonic() >= old_expiry
@@ -124,6 +138,9 @@ def test_lease_handoff_and_reads_after_quorum_loss(tmp_path):
                 await eventually(lambda: successor.lease.valid_until - time.monotonic() > 1.2)
                 await cluster.stop(*followers[:3])
                 assert await client.request("GET", "x", timeout=0.5) == "after crash"
+                with pytest.raises(TimeoutError):
+                    await client.request("SET", "x", "uncommitted despite lease", timeout=0.35)
+                assert successor.values["x"] == "after crash"
                 await eventually(lambda: successor.role != "leader")
                 with pytest.raises(TimeoutError):
                     await client.request("GET", "x", timeout=0.6)
@@ -204,3 +221,54 @@ def test_lease_watermark_uses_send_times_and_retains_promises():
     restarted.observe(2500, now=20.0)
     restarted.observe(100, now=20.1)
     assert restarted.remaining_ms(20.1) > 2400
+
+
+@pytest.mark.parametrize("count", [5, 7])
+@pytest.mark.parametrize("mode", ["standard", "lease"])
+def test_tradeoff_standard_waits_for_peer_acks_while_a_lease_reads_locally(tmp_path, count, mode):
+    async def scenario():
+        async with running_cluster(tmp_path, mode, count=count) as cluster:
+            leader = await cluster.leader()
+            async with Client(cluster.addresses) as client:
+                await client.request("SET", "read", "committed")
+            await eventually(lambda: all(node.values.get("read") == "committed"
+                                         for node in cluster.nodes.values()))
+            if leader.lease:
+                await eventually(lambda: leader.lease.valid_until - time.monotonic() > 1.1)
+
+            original_call = leader._call
+            gated = asyncio.Event()
+            one_replied = asyncio.Event()
+            release = asyncio.Event()
+            allowed_peer = leader.peers[0]
+
+            async def hold_append_entries(peer, method, request):
+                if method == "AppendEntries" and peer != allowed_peer:
+                    gated.set()
+                    await release.wait()
+                reply = await original_call(peer, method, request)
+                if method == "AppendEntries" and peer == allowed_peer and reply and reply.success:
+                    one_replied.set()
+                return reply
+
+            leader._call = hold_append_entries
+            try:
+                async with grpc.aio.insecure_channel(cluster.addresses[leader.id]) as channel:
+                    stub = service.RaftStub(channel)
+                    if mode == "lease":
+                        await asyncio.wait_for(gated.wait(), timeout=1)
+                    read = asyncio.ensure_future(
+                        stub.ServeClient(rpc.ServeClientArgs(Request="GET read"), timeout=2)
+                    )
+                    if mode == "standard":
+                        await asyncio.wait_for(gated.wait(), timeout=1)
+                        await asyncio.wait_for(one_replied.wait(), timeout=1)
+                        assert not read.done(), "the leader and one peer must not confirm a quorum read"
+                        release.set()
+                    reply = await read
+                    assert reply.Success and reply.Data == "committed"
+            finally:
+                release.set()
+                leader._call = original_call
+
+    asyncio.run(scenario())
