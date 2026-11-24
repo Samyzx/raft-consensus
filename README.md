@@ -9,6 +9,35 @@ Five independent Python processes replicate a string-to-string key-value store o
 
 Both modes wait for the leader’s current-term `NO-OP` to be committed and applied before serving client operations. A successful `SET` means the log entry was stored by a majority and applied by the leader. A missing key returns an empty string. The client reuses a request ID across retries of each `SET`, so replaying the same operation cannot overwrite a later value.
 
+## Measured tradeoffs
+
+The benchmark runs five independent gRPC node processes per mode on one Windows 11 host (Ryzen 5 7530U, Python 3.14.3).
+
+### Steady-state reads
+
+| Configured extra peer RTT | Standard GET p50 / p95 | Lease GET p50 / p95 | Read-confirmation RPC attempts per GET, standard / lease |
+| --- | ---: | ---: | ---: |
+| 0 ms | 2.67 / 3.43 ms | 0.73 / 0.90 ms | 4 / 0 |
+| 20 ms | 31.82 / 32.71 ms | 0.66 / 0.85 ms | 4 / 0 |
+| 80 ms | 95.43 / **96.27 ms** | 0.67 / **0.80 ms** | 4 / 0 |
+
+Each row uses 120 sequential reads per mode after 20 warmups. A client sends `GET` directly to the leader over one reused gRPC connection. The benchmark adds half the configured delay on either side of each peer RPC. Host scheduling can increase the realized delay. The counter records `AppendEntries` attempts in rounds confirming reads. In this implementation, standard mode fans out to all four peers and waits for the round to finish. Lease mode continues to renew through background replication.
+
+### Leader crash recovery
+
+| Lease setting | Crash to first successful GET, standard | Crash to first successful GET, lease | Observed election to successful GET, standard / lease |
+| --- | ---: | ---: | ---: |
+| 2 s (`default`) | 3.98 s (3.43–4.07 s) | 3.50 s (3.00–3.96 s) | 0.491 s / 0.002 s |
+| 6 s (`lab`) | 4.14 s (3.82–4.71 s) | 6.05 s (5.79–6.81 s) | 0.506 s / **2.542 s** |
+
+The table shows medians from five fresh clusters per mode and setting, with min–max ranges for crash-to-read time. Both modes use 500 ms heartbeats and randomized 3–5 s election timeouts. The benchmark kills the leader once a write has reached all nodes, then probes for a successor about every 50 ms and requests the same value. Election-to-read timing starts at the **first observed** successor, so it can miss a short wait between probes. Crash trials run with no added delay. The 2-second lease expired before the replacement needed to serve in this run. The longer lease can still be active after election, extending the time until a successor can serve.
+
+Reproduce the run from the project root. The command emits JSON with the sample counts, percentiles, and crash timings.
+
+```powershell
+.\.venv\Scripts\python.exe -m raftkv.benchmark --reads 120 --rtt-ms 0 20 80 --failover-trials 5
+```
+
 ## Visual lab
 
 Start the lab after installing the dependencies. It launches two independent five-node clusters and serves the dashboard on loopback. Choose 3, 5, 7, or 9 nodes per cluster in the browser. Each node is a real Python process communicating over gRPC.

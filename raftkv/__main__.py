@@ -2,6 +2,7 @@ import argparse
 import asyncio
 import math
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import grpc
@@ -16,8 +17,11 @@ async def run(args) -> None:
     if args.command == "node":
         if args.id not in cluster:
             raise ValueError(f"unknown node ID {args.id!r}")
+        if not math.isfinite(args.peer_rtt_ms) or args.peer_rtt_ms < 0:
+            raise ValueError("peer RTT must be a finite, nonnegative number of milliseconds")
         listen = args.listen or cluster[args.id]
-        node = Node(args.id, cluster, args.data_root, args.mode, PROFILES[args.profile])
+        timing = replace(PROFILES[args.profile], peer_rtt=args.peer_rtt_ms / 1000)
+        node = Node(args.id, cluster, args.data_root, args.mode, timing)
         try:
             await node.start(listen)
             print(f"Node {args.id} listening on {listen} ({args.mode}, {args.profile})", flush=True)
@@ -45,6 +49,7 @@ def main() -> int:
     node.add_argument("--profile", choices=PROFILES, default="default")
     node.add_argument("--data-root", type=Path, default=Path("."))
     node.add_argument("--listen", help="bind address when it differs from the advertised address")
+    node.add_argument("--peer-rtt-ms", type=float, default=0, help="inject RTT on peer RPCs for benchmarks")
     for name in ("get", "set"):
         client = commands.add_parser(name)
         client.add_argument("key")

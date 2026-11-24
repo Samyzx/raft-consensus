@@ -13,6 +13,7 @@ class Timing:
     lease_ms: int = 2000
     max_clock_drift: float = 0.0005
     client_attempt: float = 1.5
+    peer_rtt: float = 0.0
 
     @property
     def lease_seconds(self) -> float:

@@ -60,6 +60,7 @@ class Node(service.RaftServicer):
         self.reads: list[asyncio.Future] = []
         self.replicate_soon = False
         self.replication_rounds = 0
+        self.read_confirmation_requests = 0
         self.fatal_error: sqlite3.Error | None = None
         self.server = None
         self.task = None
@@ -227,11 +228,17 @@ class Node(service.RaftServicer):
         self._notify()
 
     async def _call(self, peer: str, method: str, request):
+        one_way_delay = self.timing.peer_rtt / 2
+        if one_way_delay:
+            await asyncio.sleep(one_way_delay)
         try:
-            return await getattr(self.stubs[peer], method)(request, timeout=self.timing.peer_timeout)
+            reply = await getattr(self.stubs[peer], method)(request, timeout=self.timing.peer_timeout)
         except grpc.aio.AioRpcError as error:
             self.logger.info("Error occurred while sending RPC to Node %s. %s", peer, error.code().name)
             return None
+        if one_way_delay:
+            await asyncio.sleep(one_way_delay)
+        return reply
 
     async def RequestVote(self, request, context):
         if (
@@ -324,13 +331,16 @@ class Node(service.RaftServicer):
         if self.noop_index:
             self._advance_commit()
         reads, self.reads = self.reads, []
-        replies = await asyncio.gather(*(self._replicate_peer(peer, term, duration) for peer in self.peers))
+        confirming_reads = any(not read.done() for read in reads)
+        replies = await asyncio.gather(*(
+            self._replicate_peer(peer, term, duration, confirming_reads) for peer in self.peers
+        ))
         confirmed = self.role == "leader" and self.term == term and 1 + sum(replies) >= self.majority
         for read in reads:
             if not read.done():
                 read.set_result(confirmed)
 
-    async def _replicate_peer(self, peer: str, term: int, duration: int) -> bool:
+    async def _replicate_peer(self, peer: str, term: int, duration: int, confirming_reads: bool) -> bool:
         if self.role != "leader" or self.term != term or self.fatal_error is not None:
             return False
         start = self.next_index[peer]
@@ -341,6 +351,8 @@ class Node(service.RaftServicer):
             lease_config_ms=self.lease_config_ms,
         )
         lease_deadline = self.lease.offer(time.monotonic()) if duration and self.lease else 0.0
+        if confirming_reads:
+            self.read_confirmation_requests += 1
         reply = await self._call(peer, "AppendEntries", request)
         if reply is None:
             return False
@@ -398,6 +410,7 @@ class Node(service.RaftServicer):
             lease_remaining_ms=max(0, int((lease.valid_until - now) * 1000)) if lease else 0,
             handoff_remaining_ms=max(0, int((lease.wait_until - now) * 1000)) if lease else 0,
             replication_rounds=self.replication_rounds,
+            read_confirmation_requests=self.read_confirmation_requests,
         )
 
     def _client_reply(self, success: bool = False, data: str = ""):

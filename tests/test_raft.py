@@ -255,6 +255,7 @@ def test_tradeoff_standard_waits_for_peer_acks_while_a_lease_reads_locally(tmp_p
             try:
                 async with grpc.aio.insecure_channel(cluster.addresses[leader.id]) as channel:
                     stub = service.RaftStub(channel)
+                    before = await stub.Inspect(rpc.InspectRequest(), timeout=1)
                     if mode == "lease":
                         await asyncio.wait_for(gated.wait(), timeout=1)
                     read = asyncio.ensure_future(
@@ -267,6 +268,9 @@ def test_tradeoff_standard_waits_for_peer_acks_while_a_lease_reads_locally(tmp_p
                         release.set()
                     reply = await read
                     assert reply.Success and reply.Data == "committed"
+                    after = await stub.Inspect(rpc.InspectRequest(), timeout=1)
+                    attempts = after.read_confirmation_requests - before.read_confirmation_requests
+                    assert attempts == (count - 1 if mode == "standard" else 0)
             finally:
                 release.set()
                 leader._call = original_call

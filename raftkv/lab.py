@@ -43,10 +43,12 @@ def reserve_addresses(count):
 
 
 class Cluster:
-    def __init__(self, mode, directory, addresses):
+    def __init__(self, mode, directory, addresses, *, profile="lab", peer_rtt_ms=0):
         self.mode = mode
         self.directory = directory
         self.addresses = addresses
+        self.profile = profile
+        self.peer_rtt_ms = peer_rtt_ms
         self.majority = len(addresses) // 2 + 1
         self.processes: dict[str, asyncio.subprocess.Process] = {}
         directory.mkdir(parents=True)
@@ -60,7 +62,8 @@ class Cluster:
         with (self.directory / f"process-{node_id}.log").open("ab") as output:
             self.processes[node_id] = await asyncio.create_subprocess_exec(
                 sys.executable, "-m", "raftkv", "--cluster", str(self.config),
-                "node", "--id", node_id, "--mode", self.mode, "--profile", "lab",
+                "node", "--id", node_id, "--mode", self.mode, "--profile", self.profile,
+                "--peer-rtt-ms", str(self.peer_rtt_ms),
                 "--data-root", str(self.directory), stdout=output, stderr=output,
                 creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
             )

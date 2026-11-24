@@ -70,4 +70,5 @@ message NodeStatus {
   uint64 lease_remaining_ms = 7;
   uint64 handoff_remaining_ms = 8;
   uint64 replication_rounds = 9;
+  uint64 read_confirmation_requests = 10;
 }
