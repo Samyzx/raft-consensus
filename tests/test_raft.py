@@ -103,7 +103,7 @@ def test_standard_replication_recovery_and_quorum_reads(tmp_path):
     asyncio.run(scenario())
 
 
-def test_lease_handoff_and_reads_after_quorum_loss(tmp_path):
+def test_lease_handoff_and_restart(tmp_path):
     async def scenario():
         async with running_cluster(tmp_path, "lease") as cluster:
             old = await cluster.leader()
@@ -136,20 +136,33 @@ def test_lease_handoff_and_reads_after_quorum_loss(tmp_path):
                 await client.request("SET", "x", "after crash")
                 await eventually(lambda: restarted.values.get("x") == "after crash")
                 assert restarted.role == "follower"
-                followers = [node_id for node_id in cluster.nodes if node_id != successor.id]
-                await eventually(lambda: successor.lease.valid_until - time.monotonic() > 1.2)
+
+    asyncio.run(scenario())
+
+
+def test_lease_reads_after_quorum_loss(tmp_path):
+    async def scenario():
+        async with running_cluster(tmp_path, "lease") as cluster:
+            leader = await cluster.leader()
+            async with Client(cluster.addresses) as client:
+                await client.request("SET", "x", "committed")
+            followers = [node_id for node_id in cluster.nodes if node_id != leader.id]
+            async with grpc.aio.insecure_channel(cluster.addresses[leader.id]) as channel:
+                stub = service.RaftStub(channel)
+                read = rpc.ServeClientArgs(Request="GET x")
+                write = rpc.ServeClientArgs(Request="SET x uncommitted")
+                assert (await stub.ServeClient(read, timeout=1)).Data == "committed"
+                await eventually(lambda: leader.lease.valid_until - time.monotonic() > 0.9)
                 await cluster.stop(*followers[:3])
-                assert await client.request("GET", "x", timeout=0.5) == "after crash"
-                with pytest.raises(TimeoutError):
-                    await client.request("SET", "x", "uncommitted despite lease", timeout=0.35)
-                assert successor.values["x"] == "after crash"
-                await eventually(lambda: successor.role != "leader")
-                with pytest.raises(TimeoutError):
-                    await client.request("GET", "x", timeout=0.6)
-                with pytest.raises(TimeoutError):
-                    await client.request("SET", "x", "no quorum", timeout=0.6)
-                dump = (tmp_path / f"logs_node_{successor.id}" / "dump.txt").read_text()
-                assert "lease renewal failed. Stepping Down." in dump
+                reply = await stub.ServeClient(read, timeout=1)
+                assert reply.Success and reply.Data == "committed"
+                assert not (await stub.ServeClient(write, timeout=1)).Success
+                assert leader.values["x"] == "committed"
+                await eventually(lambda: leader.role != "leader")
+                for request in (read, write):
+                    assert not (await stub.ServeClient(request, timeout=1)).Success
+            dump = (tmp_path / f"logs_node_{leader.id}" / "dump.txt").read_text()
+            assert "lease renewal failed. Stepping Down." in dump
 
     asyncio.run(scenario())
 
