@@ -104,11 +104,19 @@ class Cluster:
         nodes = await asyncio.gather(*(self.status(node) for node in self.addresses))
         return {"mode": self.mode, "majority": self.majority, "nodes": nodes}
 
-    async def request(self, command, timeout):
+    async def request(self, command, timeout, *, node_id=None):
         start = time.monotonic()
         result = {"mode": self.mode}
+        addresses = self.addresses if node_id is None else {node_id: self.addresses[node_id]}
+        preferred = node_id
+        if preferred is None:
+            snapshot = await self.snapshot()
+            ready = [node for node in snapshot["nodes"] if node.get("ready")]
+            if ready:
+                preferred = max(ready, key=lambda node: node["term"])["id"]
         try:
-            async with Client(self.addresses, rpc_timeout=min(2.0, timeout)) as client:
+            async with Client(addresses, rpc_timeout=min(2.0, timeout)) as client:
+                client.leader_id = preferred or ""
                 data = await client.request(*command, timeout=timeout)
             result.update(success=True, data=data)
         except TimeoutError:
@@ -217,20 +225,28 @@ class Lab:
         }
         await asyncio.gather(*(self.clusters[mode].stop(node) for mode in MODES for node in stopped[mode]))
         read = ("GET", key)
-        before = await asyncio.gather(*(cluster.request(read, 1.2) for cluster in self.clusters.values()))
+        before = await self.read_original_leaders(read, leader_ids, 1.2)
 
         lease = self.clusters["lease"]
         try:
             async with asyncio.timeout(PROFILES["lab"].lease_seconds + 2):
-                while (await lease.status(leader_ids["lease"]))["role"] == "leader":
+                while True:
+                    state = await lease.status(leader_ids["lease"])
+                    if "term" in state and state["role"] != "leader":
+                        break
                     await asyncio.sleep(0.1)
         except TimeoutError:
             raise ValueError("The lease leader did not step down within the demo window") from None
-        after = await asyncio.gather(*(cluster.request(read, 0.8) for cluster in self.clusters.values()))
+        after = await self.read_original_leaders(read, leader_ids, 0.8)
         expected = [False, True, False, False]
         observed = [result["success"] for result in before + after]
         passed = observed == expected and before[1].get("data") == value
         return {"before": before, "after": after, "stopped": stopped, "passed": passed, "key": key}
+
+    async def read_original_leaders(self, command, leaders, timeout):
+        return await asyncio.gather(*(
+            cluster.request(command, timeout, node_id=leaders[mode]) for mode, cluster in self.clusters.items()
+        ))
 
 
 class LabServer(ThreadingHTTPServer):

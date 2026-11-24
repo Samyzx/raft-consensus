@@ -21,7 +21,7 @@ Open [Raft Lab](http://127.0.0.1:8000). Try a `SET` and `GET` in both clusters, 
 
 ![Raft Lab showing two five-node clusters after a successful write and read](docs/raft-lab.png)
 
-The lab uses a **6-second lease** to make the handoff and quorum-loss window visible. The normal CLI retains the documented 2-second default. The dashboard’s request times include local client routing and retry deadlines. Use the regression tests for a controlled comparison of which operations require peer acknowledgments.
+The lab uses a **6-second lease** to make the handoff and quorum-loss window visible. The normal CLI retains the documented 2-second default. The experiment targets the original leaders directly to isolate the effect of quorum loss. Client console request times include local client routing and retry deadlines. Use the regression tests for a controlled comparison of which operations require peer acknowledgments.
 
 ## Prerequisites
 

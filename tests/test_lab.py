@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 from raftkv.lab import Lab
 
@@ -19,7 +20,7 @@ def test_quorum_loss_experiment_with_real_node_processes(tmp_path):
                         break
                     await asyncio.sleep(0.1)
             result = await lab.action("compare", {})
-            assert result["passed"], result
+            assert result["passed"], json.dumps(result, indent=2)
             assert result["before"][1]["data"] == "committed before quorum loss"
             state = (await lab.snapshot())["clusters"]
             assert all(sum(node["role"] == "stopped" for node in cluster["nodes"]) == 2 for cluster in state)
