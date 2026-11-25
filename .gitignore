@@ -4,4 +4,5 @@ __pycache__/
 *.egg-info/
 logs_node_*/
 cluster.vm.json
+raft-benchmark.tgz
 .env

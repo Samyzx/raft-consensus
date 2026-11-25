@@ -1,0 +1,14 @@
+[Unit]
+Description=Raft benchmark replica
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+DynamicUser=yes
+StateDirectory=raft-benchmark
+WorkingDirectory=/opt/raft-benchmark
+Environment=PYTHONPATH=/opt/raft-benchmark/vendor
+EnvironmentFile=/opt/raft-benchmark/node.env
+ExecStart=/usr/bin/python3 -m raftkv --cluster cluster.json node --id ${NODE_ID} --mode ${RAFT_MODE} --profile ${RAFT_PROFILE} --data-root /var/lib/raft-benchmark/${RAFT_MODE}-${RAFT_PROFILE} --listen 0.0.0.0:50051
+Restart=no

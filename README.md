@@ -133,3 +133,22 @@ Copy `cluster.local.json` and replace each address with the corresponding VM’s
 .venv/bin/python -m raftkv --cluster cluster.vm.json node --id 0 --mode lease --listen 0.0.0.0:50051 --data-root runs/lease
 .venv/bin/python -m raftkv --cluster cluster.vm.json get x
 ```
+
+### Benchmark from a separate VM
+
+Run the remote benchmark from a host with access to the cluster's private gRPC addresses. Compare modes on the same infrastructure with the same offered rate, request mix, and run duration. The JSON report includes p50/p95/p99 for successful operations, counts of rejected and timed-out calls, achieved throughput, and read-confirmation peer RPC attempts. It reports client-side concurrency saturation separately.
+
+```bash
+python -m raftkv.remote_benchmark --cluster cluster.vm.json load --rps 100 --seconds 30 --write-percent 10
+python -m raftkv.remote_benchmark --cluster cluster.vm.json watch-failover
+```
+
+For the failover trial, wait for the watcher to print the original leader ID, then terminate its Raft process. The watcher measures from the first failed probe and the first observed successor election to a successful read. It also verifies ten values acknowledged before the crash.
+
+For private Ubuntu 24.04 x86-64 VMs, build an offline bundle from the repository root. Copy the archive to each VM over SSH and extract it under `/opt/raft-benchmark`. The bundle includes the compatible Linux wheels.
+
+```bash
+python -m cloud.package --cluster cluster.vm.json --output raft-benchmark.tgz
+```
+
+On each replica, run `sudo bash /opt/raft-benchmark/cloud/bootstrap.sh node 0 standard default` with that VM's node ID. On the load generator, run `sudo bash /opt/raft-benchmark/cloud/bootstrap.sh driver`, then run the benchmark from `/opt/raft-benchmark` using `PYTHONPATH=vendor python3` and `--cluster cluster.json`. The replica service preserves its on-disk state within each mode and profile and can be restarted with `sudo systemctl start raft-benchmark.service` after a test crash.
