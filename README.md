@@ -38,6 +38,8 @@ Reproduce the run from the project root. The command emits JSON with the sample 
 .\.venv\Scripts\python.exe -m raftkv.benchmark --reads 120 --rtt-ms 0 20 80 --failover-trials 5
 ```
 
+A separate [Google Cloud benchmark](docs/gcp-benchmark.md) ran five replicas across three zones and completed 48,000 matched operations. At 100 operations/s with 10% writes, GET p95 fell from **18.49 ms to 3.17 ms** with a leader lease, while SET p95 stayed near 22 ms in both modes.
+
 ## Visual lab
 
 Start the lab after installing the dependencies. It launches two independent five-node clusters and serves the dashboard on loopback. Choose 3, 5, 7, or 9 nodes per cluster in the browser. Each node is a real Python process communicating over gRPC.
