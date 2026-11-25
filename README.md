@@ -38,7 +38,7 @@ Reproduce the run from the project root. The command emits JSON with the sample 
 .\.venv\Scripts\python.exe -m raftkv.benchmark --reads 120 --rtt-ms 0 20 80 --failover-trials 5
 ```
 
-A separate [Google Cloud benchmark](docs/gcp-benchmark.md) ran five replicas across three zones and completed 48,000 matched operations. At 100 operations/s with 10% writes, GET p95 fell from **18.49 ms to 3.17 ms** with a leader lease, while SET p95 stayed near 22 ms in both modes.
+A separate [Google Cloud benchmark](docs/gcp-benchmark.md) ran five replicas across three zones and completed 48,000 matched operations. At 100 operations/s with 10% writes, GET p95 fell from **18.49 ms to 3.17 ms** with a leader lease, while SET p95 stayed near 22 ms in both modes. The report also includes [Cloud Monitoring telemetry](docs/gcp-benchmark.md#cloud-monitoring-evidence) for the leader's network traffic and CPU.
 
 ## Visual lab
 
