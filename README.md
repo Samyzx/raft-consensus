@@ -38,7 +38,9 @@ Reproduce the run from the project root. The command emits JSON with the sample 
 .\.venv\Scripts\python.exe -m raftkv.benchmark --reads 120 --rtt-ms 0 20 80 --failover-trials 5
 ```
 
-A separate [Google Cloud benchmark](docs/gcp-benchmark.md) ran five replicas across three zones and completed 48,000 matched operations. At 100 operations/s with 10% writes, GET p95 fell from **18.49 ms to 3.17 ms** with a leader lease, while SET p95 stayed near 22 ms in both modes. The report also includes [Cloud Monitoring telemetry](docs/gcp-benchmark.md#cloud-monitoring-evidence) for the leader's network traffic and CPU.
+On Google Cloud, five replicas across three zones completed **360,000 scheduled operations**. With 10% writes, a leader lease reduced GET p95 from **39.83 ms to 7.75 ms (80.5%)**, while SET p95 stayed near 52 ms in both modes. At 400 reads/s, Cloud Monitoring measured **74.5% fewer bytes sent per minute** by the lease leader. [Sustained benchmark and telemetry](docs/gcp-followup.md)
+
+The earlier cloud run also measured recovery after a leader process crash and read availability after quorum loss. [Cloud failure and recovery results](docs/gcp-benchmark.md#failure-and-recovery)
 
 ## Visual lab
 
@@ -139,6 +141,8 @@ Copy `cluster.local.json` and replace each address with the corresponding VM’s
 ### Benchmark from a separate VM
 
 Run the remote benchmark from a host with access to the cluster's private gRPC addresses. Compare modes on the same infrastructure with the same offered rate, request mix, and run duration. The JSON report includes p50/p95/p99 for successful operations, counts of rejected and timed-out calls, achieved throughput, and read-confirmation peer RPC attempts. It reports client-side concurrency saturation separately.
+
+Pass `--minute-histograms` to `load` to include per-minute outcomes and latency distributions for alignment with VM telemetry.
 
 ```bash
 python -m raftkv.remote_benchmark --cluster cluster.vm.json load --rps 100 --seconds 30 --write-percent 10

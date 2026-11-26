@@ -1,0 +1,2423 @@
+{
+  "source_commit": "91513507bde6acd57c41860f96db9afc0e31ddca",
+  "region": "us-central1",
+  "vm_type": "e2-standard-2",
+  "zones": {
+    "0": "us-central1-a",
+    "1": "us-central1-a",
+    "driver": "us-central1-a",
+    "2": "us-central1-b",
+    "3": "us-central1-b",
+    "4": "us-central1-c"
+  },
+  "warmup_s": 15,
+  "measurement_s": 300,
+  "summary": [
+    {
+      "mode": "standard",
+      "offered_rps": 100,
+      "write_percent": 0,
+      "leader_id": "0",
+      "leader_zone": "us-central1-a",
+      "start_utc": "2026-11-26T11:14:15.585Z",
+      "scheduled_end_utc": "2026-11-26T11:19:15.585Z",
+      "offered": 30000,
+      "successes": 30000,
+      "successes_per_s": 100.0,
+      "get_p95_ms": 6.318,
+      "get_p99_ms": 6.744,
+      "set_p95_ms": null,
+      "read_peer_rpc_attempts_per_get": 4.0,
+      "fully_aligned_minutes": 4,
+      "median_leader_sent_mb_min": 3.711,
+      "median_leader_received_mb_min": 3.855,
+      "median_leader_cpu_pct": 21.518
+    },
+    {
+      "mode": "standard",
+      "offered_rps": 400,
+      "write_percent": 0,
+      "leader_id": "0",
+      "leader_zone": "us-central1-a",
+      "start_utc": "2026-11-26T11:19:30.842Z",
+      "scheduled_end_utc": "2026-11-26T11:24:30.842Z",
+      "offered": 120000,
+      "successes": 120000,
+      "successes_per_s": 400.0,
+      "get_p95_ms": 8.144,
+      "get_p99_ms": 9.711,
+      "set_p95_ms": null,
+      "read_peer_rpc_attempts_per_get": 3.267,
+      "fully_aligned_minutes": 4,
+      "median_leader_sent_mb_min": 12.811,
+      "median_leader_received_mb_min": 13.465,
+      "median_leader_cpu_pct": 49.75
+    },
+    {
+      "mode": "standard",
+      "offered_rps": 100,
+      "write_percent": 10,
+      "leader_id": "0",
+      "leader_zone": "us-central1-a",
+      "start_utc": "2026-11-26T11:24:46.171Z",
+      "scheduled_end_utc": "2026-11-26T11:29:46.171Z",
+      "offered": 30000,
+      "successes": 30000,
+      "successes_per_s": 99.99,
+      "get_p95_ms": 39.827,
+      "get_p99_ms": 52.459,
+      "set_p95_ms": 51.973,
+      "read_peer_rpc_attempts_per_get": 3.189,
+      "fully_aligned_minutes": 4,
+      "median_leader_sent_mb_min": 3.462,
+      "median_leader_received_mb_min": 3.463,
+      "median_leader_cpu_pct": 23.47
+    },
+    {
+      "mode": "lease",
+      "offered_rps": 100,
+      "write_percent": 0,
+      "leader_id": "0",
+      "leader_zone": "us-central1-a",
+      "start_utc": "2026-11-26T11:31:48.085Z",
+      "scheduled_end_utc": "2026-11-26T11:36:48.085Z",
+      "offered": 30000,
+      "successes": 30000,
+      "successes_per_s": 100.0,
+      "get_p95_ms": 2.45,
+      "get_p99_ms": 2.645,
+      "set_p95_ms": null,
+      "read_peer_rpc_attempts_per_get": 0.0,
+      "fully_aligned_minutes": 4,
+      "median_leader_sent_mb_min": 0.891,
+      "median_leader_received_mb_min": 1.031,
+      "median_leader_cpu_pct": 8.598
+    },
+    {
+      "mode": "lease",
+      "offered_rps": 400,
+      "write_percent": 0,
+      "leader_id": "0",
+      "leader_zone": "us-central1-a",
+      "start_utc": "2026-11-26T11:37:03.345Z",
+      "scheduled_end_utc": "2026-11-26T11:42:03.345Z",
+      "offered": 120000,
+      "successes": 120000,
+      "successes_per_s": 400.0,
+      "get_p95_ms": 1.861,
+      "get_p99_ms": 2.065,
+      "set_p95_ms": null,
+      "read_peer_rpc_attempts_per_get": 0.0,
+      "fully_aligned_minutes": 4,
+      "median_leader_sent_mb_min": 3.267,
+      "median_leader_received_mb_min": 3.911,
+      "median_leader_cpu_pct": 24.001
+    },
+    {
+      "mode": "lease",
+      "offered_rps": 100,
+      "write_percent": 10,
+      "leader_id": "0",
+      "leader_zone": "us-central1-a",
+      "start_utc": "2026-11-26T11:42:18.761Z",
+      "scheduled_end_utc": "2026-11-26T11:47:18.761Z",
+      "offered": 30000,
+      "successes": 30000,
+      "successes_per_s": 99.98,
+      "get_p95_ms": 7.75,
+      "get_p99_ms": 14.234,
+      "set_p95_ms": 52.111,
+      "read_peer_rpc_attempts_per_get": 0.0,
+      "fully_aligned_minutes": 4,
+      "median_leader_sent_mb_min": 1.809,
+      "median_leader_received_mb_min": 1.575,
+      "median_leader_cpu_pct": 17.569
+    }
+  ],
+  "application": {
+    "standard": [
+      {
+        "mode": "standard",
+        "replicas": 5,
+        "leader_id": "0",
+        "start_utc": "2026-11-26T11:14:15.585Z",
+        "scheduled_end_utc": "2026-11-26T11:19:15.585Z",
+        "elapsed_s": 300.001,
+        "successful_per_s": 100.0,
+        "operations": {
+          "GET": {
+            "outcomes": {
+              "ok": 30000
+            },
+            "success_latency_ms": {
+              "p50": 5.629,
+              "p95": 6.318,
+              "p99": 6.744
+            }
+          },
+          "SET": {
+            "outcomes": {},
+            "success_latency_ms": null
+          }
+        },
+        "latency_histogram_upper_bounds_ms": [
+          0.25,
+          0.5,
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          1024,
+          2048
+        ],
+        "minute_histograms": [
+          {
+            "start_utc": "2026-11-26T11:14:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 4442
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  4441,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 5.731,
+                  "p95": 6.435,
+                  "p99": 6.846
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:15:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 6000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  5990,
+                  4,
+                  6,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 5.654,
+                  "p95": 6.265,
+                  "p99": 6.671
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:16:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 6000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  5993,
+                  7,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 5.7,
+                  "p95": 6.439,
+                  "p99": 6.972
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:17:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 6000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  5997,
+                  3,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 5.591,
+                  "p95": 6.286,
+                  "p99": 6.681
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:18:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 6000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  5994,
+                  5,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 5.508,
+                  "p95": 6.105,
+                  "p99": 6.51
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:19:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 1558
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1556,
+                  2,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 5.532,
+                  "p95": 6.224,
+                  "p99": 6.625
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          }
+        ],
+        "offered_per_s": 100,
+        "scheduled_s": 300,
+        "write_percent": 0,
+        "get_confirmation_peer_attempts": 119992,
+        "confirmation_peer_attempts_per_successful_get": 4.0
+      },
+      {
+        "mode": "standard",
+        "replicas": 5,
+        "leader_id": "0",
+        "start_utc": "2026-11-26T11:24:46.171Z",
+        "scheduled_end_utc": "2026-11-26T11:29:46.171Z",
+        "elapsed_s": 300.043,
+        "successful_per_s": 99.99,
+        "operations": {
+          "GET": {
+            "outcomes": {
+              "ok": 27000
+            },
+            "success_latency_ms": {
+              "p50": 5.553,
+              "p95": 39.827,
+              "p99": 52.459
+            }
+          },
+          "SET": {
+            "outcomes": {
+              "ok": 3000
+            },
+            "success_latency_ms": {
+              "p50": 33.403,
+              "p95": 51.973,
+              "p99": 55.505
+            }
+          }
+        },
+        "latency_histogram_upper_bounds_ms": [
+          0.25,
+          0.5,
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          1024,
+          2048
+        ],
+        "minute_histograms": [
+          {
+            "start_utc": "2026-11-26T11:24:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 1245
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  992,
+                  178,
+                  75,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 5.329,
+                  "p95": 16.24,
+                  "p99": 20.006
+                }
+              },
+              "SET": {
+                "outcomes": {
+                  "ok": 138
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  138,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 18.147,
+                  "p95": 19.947,
+                  "p99": 20.292
+                }
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:25:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 5400
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  4329,
+                  691,
+                  380,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 5.308,
+                  "p95": 17.491,
+                  "p99": 22.018
+                }
+              },
+              "SET": {
+                "outcomes": {
+                  "ok": 600
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  600,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 20.481,
+                  "p95": 22.495,
+                  "p99": 23.34
+                }
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:26:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 5400
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  3947,
+                  707,
+                  711,
+                  35,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 5.403,
+                  "p95": 24.174,
+                  "p99": 30.066
+                }
+              },
+              "SET": {
+                "outcomes": {
+                  "ok": 600
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  588,
+                  12,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 27.006,
+                  "p95": 30.939,
+                  "p99": 35.242
+                }
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:27:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 5400
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  3427,
+                  666,
+                  982,
+                  325,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 5.506,
+                  "p95": 32.883,
+                  "p99": 38.36
+                }
+              },
+              "SET": {
+                "outcomes": {
+                  "ok": 600
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  78,
+                  522,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 35.436,
+                  "p95": 39.341,
+                  "p99": 42.463
+                }
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:28:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 5400
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2737,
+                  660,
+                  991,
+                  994,
+                  18,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 7.537,
+                  "p95": 44.088,
+                  "p99": 55.028
+                }
+              },
+              "SET": {
+                "outcomes": {
+                  "ok": 600
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  600,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 43.567,
+                  "p95": 48.469,
+                  "p99": 54.623
+                }
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:29:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 4155
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1734,
+                  542,
+                  734,
+                  1112,
+                  33,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 12.709,
+                  "p95": 52.281,
+                  "p99": 63.284
+                }
+              },
+              "SET": {
+                "outcomes": {
+                  "ok": 462
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  461,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 50.854,
+                  "p95": 55.682,
+                  "p99": 61.738
+                }
+              }
+            }
+          }
+        ],
+        "offered_per_s": 100,
+        "scheduled_s": 300,
+        "write_percent": 10,
+        "get_confirmation_peer_attempts": 86108,
+        "confirmation_peer_attempts_per_successful_get": 3.189
+      },
+      {
+        "mode": "standard",
+        "replicas": 5,
+        "leader_id": "0",
+        "start_utc": "2026-11-26T11:19:30.842Z",
+        "scheduled_end_utc": "2026-11-26T11:24:30.842Z",
+        "elapsed_s": 300.003,
+        "successful_per_s": 400.0,
+        "operations": {
+          "GET": {
+            "outcomes": {
+              "ok": 120000
+            },
+            "success_latency_ms": {
+              "p50": 6.135,
+              "p95": 8.144,
+              "p99": 9.711
+            }
+          },
+          "SET": {
+            "outcomes": {},
+            "success_latency_ms": null
+          }
+        },
+        "latency_histogram_upper_bounds_ms": [
+          0.25,
+          0.5,
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          1024,
+          2048
+        ],
+        "minute_histograms": [
+          {
+            "start_utc": "2026-11-26T11:19:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 11664
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  10734,
+                  925,
+                  5,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 6.33,
+                  "p95": 8.305,
+                  "p99": 10.057
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:20:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 24000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  22438,
+                  1548,
+                  14,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 6.154,
+                  "p95": 8.19,
+                  "p99": 10.452
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:21:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 24000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  22480,
+                  1514,
+                  6,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 6.134,
+                  "p95": 8.147,
+                  "p99": 9.587
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:22:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 24000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  22055,
+                  1944,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 6.243,
+                  "p95": 8.357,
+                  "p99": 9.749
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:23:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 24000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  23007,
+                  973,
+                  20,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 5.993,
+                  "p95": 7.907,
+                  "p99": 9.041
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:24:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 12336
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  11749,
+                  587,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 6.028,
+                  "p95": 7.973,
+                  "p99": 9.207
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          }
+        ],
+        "offered_per_s": 400,
+        "scheduled_s": 300,
+        "write_percent": 0,
+        "get_confirmation_peer_attempts": 392008,
+        "confirmation_peer_attempts_per_successful_get": 3.267
+      }
+    ],
+    "lease": [
+      {
+        "mode": "lease",
+        "replicas": 5,
+        "leader_id": "0",
+        "start_utc": "2026-11-26T11:31:48.085Z",
+        "scheduled_end_utc": "2026-11-26T11:36:48.085Z",
+        "elapsed_s": 300.0,
+        "successful_per_s": 100.0,
+        "operations": {
+          "GET": {
+            "outcomes": {
+              "ok": 30000
+            },
+            "success_latency_ms": {
+              "p50": 2.177,
+              "p95": 2.45,
+              "p99": 2.645
+            }
+          },
+          "SET": {
+            "outcomes": {},
+            "success_latency_ms": null
+          }
+        },
+        "latency_histogram_upper_bounds_ms": [
+          0.25,
+          0.5,
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          1024,
+          2048
+        ],
+        "minute_histograms": [
+          {
+            "start_utc": "2026-11-26T11:31:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 1192
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  99,
+                  1091,
+                  2,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 2.146,
+                  "p95": 2.404,
+                  "p99": 2.618
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:32:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 6000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  522,
+                  5477,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 2.161,
+                  "p95": 2.431,
+                  "p99": 2.587
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:33:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 6000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  373,
+                  5621,
+                  5,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 2.176,
+                  "p95": 2.444,
+                  "p99": 2.664
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:34:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 6000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  359,
+                  5638,
+                  3,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 2.187,
+                  "p95": 2.463,
+                  "p99": 2.666
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:35:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 6000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  375,
+                  5622,
+                  3,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 2.194,
+                  "p95": 2.476,
+                  "p99": 2.672
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:36:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 4808
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  328,
+                  4478,
+                  2,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 2.175,
+                  "p95": 2.445,
+                  "p99": 2.613
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          }
+        ],
+        "offered_per_s": 100,
+        "scheduled_s": 300,
+        "write_percent": 0,
+        "get_confirmation_peer_attempts": 0,
+        "confirmation_peer_attempts_per_successful_get": 0.0
+      },
+      {
+        "mode": "lease",
+        "replicas": 5,
+        "leader_id": "0",
+        "start_utc": "2026-11-26T11:42:18.761Z",
+        "scheduled_end_utc": "2026-11-26T11:47:18.761Z",
+        "elapsed_s": 300.046,
+        "successful_per_s": 99.98,
+        "operations": {
+          "GET": {
+            "outcomes": {
+              "ok": 27000
+            },
+            "success_latency_ms": {
+              "p50": 2.135,
+              "p95": 7.75,
+              "p99": 14.234
+            }
+          },
+          "SET": {
+            "outcomes": {
+              "ok": 3000
+            },
+            "success_latency_ms": {
+              "p50": 33.35,
+              "p95": 52.111,
+              "p99": 56.315
+            }
+          }
+        },
+        "latency_histogram_upper_bounds_ms": [
+          0.25,
+          0.5,
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          1024,
+          2048
+        ],
+        "minute_histograms": [
+          {
+            "start_utc": "2026-11-26T11:42:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 3712
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  901,
+                  2804,
+                  7,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 2.12,
+                  "p95": 2.435,
+                  "p99": 2.886
+                }
+              },
+              "SET": {
+                "outcomes": {
+                  "ok": 412
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  412,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 19.355,
+                  "p95": 21.769,
+                  "p99": 22.777
+                }
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:43:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 5400
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  1286,
+                  4075,
+                  35,
+                  4,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 2.116,
+                  "p95": 2.514,
+                  "p99": 3.798
+                }
+              },
+              "SET": {
+                "outcomes": {
+                  "ok": 600
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  599,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 22.734,
+                  "p95": 26.474,
+                  "p99": 27.913
+                }
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:44:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 5400
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  1157,
+                  3814,
+                  418,
+                  11,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 2.14,
+                  "p95": 4.834,
+                  "p99": 6.205
+                }
+              },
+              "SET": {
+                "outcomes": {
+                  "ok": 600
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  386,
+                  214,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 30.992,
+                  "p95": 34.701,
+                  "p99": 40.734
+                }
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:45:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 5400
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  1373,
+                  3382,
+                  245,
+                  390,
+                  10,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 2.136,
+                  "p95": 8.792,
+                  "p99": 10.505
+                }
+              },
+              "SET": {
+                "outcomes": {
+                  "ok": 600
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  600,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 39.155,
+                  "p95": 43.766,
+                  "p99": 49.097
+                }
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:46:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 5400
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  1144,
+                  3245,
+                  380,
+                  615,
+                  16,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 2.159,
+                  "p95": 12.952,
+                  "p99": 14.458
+                }
+              },
+              "SET": {
+                "outcomes": {
+                  "ok": 600
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  600,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 47.382,
+                  "p95": 52.228,
+                  "p99": 59.996
+                }
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:47:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 1688
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  447,
+                  844,
+                  153,
+                  210,
+                  34,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 2.161,
+                  "p95": 15.331,
+                  "p99": 16.392
+                }
+              },
+              "SET": {
+                "outcomes": {
+                  "ok": 188
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  186,
+                  2,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 52.455,
+                  "p95": 61.352,
+                  "p99": 65.296
+                }
+              }
+            }
+          }
+        ],
+        "offered_per_s": 100,
+        "scheduled_s": 300,
+        "write_percent": 10,
+        "get_confirmation_peer_attempts": 0,
+        "confirmation_peer_attempts_per_successful_get": 0.0
+      },
+      {
+        "mode": "lease",
+        "replicas": 5,
+        "leader_id": "0",
+        "start_utc": "2026-11-26T11:37:03.345Z",
+        "scheduled_end_utc": "2026-11-26T11:42:03.345Z",
+        "elapsed_s": 300.0,
+        "successful_per_s": 400.0,
+        "operations": {
+          "GET": {
+            "outcomes": {
+              "ok": 120000
+            },
+            "success_latency_ms": {
+              "p50": 1.564,
+              "p95": 1.861,
+              "p99": 2.065
+            }
+          },
+          "SET": {
+            "outcomes": {},
+            "success_latency_ms": null
+          }
+        },
+        "latency_histogram_upper_bounds_ms": [
+          0.25,
+          0.5,
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          1024,
+          2048
+        ],
+        "minute_histograms": [
+          {
+            "start_utc": "2026-11-26T11:37:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 22662
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  22428,
+                  228,
+                  4,
+                  2,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 1.54,
+                  "p95": 1.82,
+                  "p99": 2.005
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:38:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 24000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  23726,
+                  268,
+                  6,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 1.55,
+                  "p95": 1.83,
+                  "p99": 2.015
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:39:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 24000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  23748,
+                  244,
+                  6,
+                  2,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 1.542,
+                  "p95": 1.815,
+                  "p99": 2.006
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:40:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 24000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  23623,
+                  370,
+                  6,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 1.585,
+                  "p95": 1.88,
+                  "p99": 2.073
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:41:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 24000
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  23392,
+                  596,
+                  10,
+                  2,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 1.605,
+                  "p95": 1.918,
+                  "p99": 2.152
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          },
+          {
+            "start_utc": "2026-11-26T11:42:00Z",
+            "operations": {
+              "GET": {
+                "outcomes": {
+                  "ok": 1338
+                },
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  1305,
+                  32,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": {
+                  "p50": 1.544,
+                  "p95": 1.876,
+                  "p99": 2.302
+                }
+              },
+              "SET": {
+                "outcomes": {},
+                "success_latency_counts": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "success_latency_ms": null
+              }
+            }
+          }
+        ],
+        "offered_per_s": 400,
+        "scheduled_s": 300,
+        "write_percent": 0,
+        "get_confirmation_peer_attempts": 0,
+        "confirmation_peer_attempts_per_successful_get": 0.0
+      }
+    ]
+  }
+}

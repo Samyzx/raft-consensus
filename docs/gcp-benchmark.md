@@ -58,7 +58,7 @@ AND resource.labels.instance_id = "INSTANCE_ID"
 AND metric.type = "compute.googleapis.com/instance/network/sent_bytes_count"
 ```
 
-For a follow-up run, hold each workload and mode for several minutes and export `GET` and `SET` latency histograms with their workload labels. That gives each condition several VM samples and puts the application and infrastructure measurements on the same timeline.
+The follow-up held each workload for five minutes per mode and joined the driver’s request measurements with 24 complete minutes of Compute Engine telemetry. [Sustained Raft benchmark](gcp-followup.md)
 
 ## Failure and recovery
 
