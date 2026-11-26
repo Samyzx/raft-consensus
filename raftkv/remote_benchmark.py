@@ -8,8 +8,10 @@ import shlex
 import statistics
 import sys
 import time
-from collections import Counter
+from bisect import bisect_left
+from collections import Counter, defaultdict
 from contextlib import AsyncExitStack
+from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
 
@@ -22,6 +24,7 @@ from .config import load_cluster
 
 PROBE_INTERVAL = 0.05
 VALUE = "committed"
+LATENCY_BOUNDS_MS = (0.25, 0.5, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048)
 
 
 async def inspect(stub):
@@ -69,34 +72,57 @@ def percentiles(samples):
     }
 
 
-async def drive(stub, key, *, rate, seconds, write_percent, in_flight):
+def histogram(samples):
+    counts = [0] * (len(LATENCY_BOUNDS_MS) + 1)
+    for sample in samples:
+        counts[bisect_left(LATENCY_BOUNDS_MS, sample)] += 1
+    return counts
+
+
+def utc_timestamp(seconds):
+    return datetime.fromtimestamp(seconds, tz=timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
+
+
+async def drive(stub, key, *, rate, seconds, write_percent, in_flight, minute_histograms=False):
     loop = asyncio.get_running_loop()
     outcomes = {"GET": Counter(), "SET": Counter()}
     latency = {"GET": [], "SET": []}
+    minutes = defaultdict(lambda: {verb: (Counter(), []) for verb in ("GET", "SET")})
     pending = set()
     prefix = uuid4().hex
 
-    async def call(verb, index):
+    def record(verb, minute, outcome, elapsed_ms=None):
+        outcomes[verb][outcome] += 1
+        if outcome == "ok":
+            latency[verb].append(elapsed_ms)
+        if minute_histograms:
+            counts, samples = minutes[minute][verb]
+            counts[outcome] += 1
+            if outcome == "ok":
+                samples.append(elapsed_ms)
+
+    async def call(verb, index, minute):
         command = ("SET", f"{prefix}-{index}", VALUE) if verb == "SET" else ("GET", key)
         started = time.perf_counter_ns()
         outcome, value = await request(stub, command)
         elapsed_ms = (time.perf_counter_ns() - started) / 1_000_000
         if outcome == "ok" and verb == "GET" and value != VALUE:
             outcome = "wrong_value"
-        outcomes[verb][outcome] += 1
-        if outcome == "ok":
-            latency[verb].append(elapsed_ms)
+        record(verb, minute, outcome, elapsed_ms)
 
+    started_utc = time.time()
     started = loop.time()
     try:
         for index in range(round(rate * seconds)):
-            scheduled = started + index / rate
+            offset = index / rate
+            scheduled = started + offset
+            minute = math.floor((started_utc + offset) / 60) * 60
             await asyncio.sleep(max(0, scheduled - loop.time()))
             verb = "SET" if (index * write_percent) % 100 + write_percent >= 100 else "GET"
             if len(pending) >= in_flight:
-                outcomes[verb]["client_saturated"] += 1
+                record(verb, minute, "client_saturated")
                 continue
-            task = asyncio.create_task(call(verb, index))
+            task = asyncio.create_task(call(verb, index, minute))
             pending.add(task)
             task.add_done_callback(pending.discard)
         await asyncio.sleep(max(0, started + seconds - loop.time()))
@@ -108,7 +134,9 @@ async def drive(stub, key, *, rate, seconds, write_percent, in_flight):
 
     elapsed = loop.time() - started
     successful = sum(counts["ok"] for counts in outcomes.values())
-    return {
+    result = {
+        "start_utc": utc_timestamp(started_utc),
+        "scheduled_end_utc": utc_timestamp(started_utc + seconds),
         "elapsed_s": round(elapsed, 3),
         "successful_per_s": round(successful / elapsed, 2),
         "operations": {
@@ -116,6 +144,20 @@ async def drive(stub, key, *, rate, seconds, write_percent, in_flight):
             for verb, counts in outcomes.items()
         },
     }
+    if minute_histograms:
+        result["latency_histogram_upper_bounds_ms"] = LATENCY_BOUNDS_MS
+        result["minute_histograms"] = [
+            {
+                "start_utc": utc_timestamp(minute),
+                "operations": {
+                    verb: {"outcomes": dict(counts), "success_latency_counts": histogram(samples),
+                           "success_latency_ms": percentiles(samples)}
+                    for verb, (counts, samples) in operations.items()
+                },
+            }
+            for minute, operations in sorted(minutes.items())
+        ]
+    return result
 
 
 async def workload(stub, args, key):
@@ -124,7 +166,8 @@ async def workload(stub, args, key):
     if args.warmup:
         await drive(stub, key, seconds=args.warmup, **options)
     before = await inspect(stub)
-    result = await drive(stub, key, seconds=args.seconds, **options)
+    result = await drive(stub, key, seconds=args.seconds,
+                         minute_histograms=getattr(args, "minute_histograms", False), **options)
     after = await inspect(stub)
     if before is None or after is None or before.term != after.term or not after.ready:
         raise RuntimeError("leadership changed during the workload; repeat the steady-state run")
@@ -190,7 +233,7 @@ async def main(args):
             result = await workload(stubs[node], args, key)
         else:
             result = await watch_failover(stubs, node, status.term, key, args.wait)
-        return {"mode": mode, "replicas": len(stubs), **result}
+        return {"mode": mode, "replicas": len(stubs), "leader_id": node, **result}
 
 
 def cli():
@@ -203,6 +246,7 @@ def cli():
     load.add_argument("--warmup", type=int, default=5)
     load.add_argument("--write-percent", type=int, choices=range(101), default=0, metavar="0-100")
     load.add_argument("--in-flight", type=int, default=128)
+    load.add_argument("--minute-histograms", action="store_true", help="include UTC-minute latency histograms")
     watch = commands.add_parser("watch-failover", help="observe a leader process crash and test recovered data")
     watch.add_argument("--wait", type=int, default=120)
     args = parser.parse_args()
