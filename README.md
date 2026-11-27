@@ -138,6 +138,11 @@ Copy `cluster.local.json` and replace each address with the corresponding VM’s
 .venv/bin/python -m raftkv --cluster cluster.vm.json get x
 ```
 
+
+
+
+Contributed by: Samyak Jain
+
 ### Benchmark from a separate VM
 
 Run the remote benchmark from a host with access to the cluster's private gRPC addresses. Compare modes on the same infrastructure with the same offered rate, request mix, and run duration. The JSON report includes p50/p95/p99 for successful operations, counts of rejected and timed-out calls, achieved throughput, and read-confirmation peer RPC attempts. It reports client-side concurrency saturation separately.
